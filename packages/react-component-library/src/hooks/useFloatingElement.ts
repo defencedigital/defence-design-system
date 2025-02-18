@@ -1,51 +1,63 @@
-import React, { Dispatch, SetStateAction } from 'react'
-import { PositioningStrategy, Placement, VirtualElement } from '@popperjs/core'
-import { usePopper } from 'react-popper'
+import React from 'react'
+import {
+  arrow,
+  Placement,
+  Strategy,
+  useFloating,
+  VirtualElement,
+} from '@floating-ui/react-dom'
 
 import { useStatefulRef } from './useStatefulRef'
 
 export const useFloatingElement = (
   placement: Placement = 'bottom',
-  strategy: PositioningStrategy = 'fixed',
+  strategy: Strategy = 'fixed',
   externalTargetElement: Element | VirtualElement | null = null
 ): {
-  targetElementRef: Dispatch<SetStateAction<Element | null>>
+  arrowElementRef: (node: HTMLElement | null) => void
+  arrowStyles: React.CSSProperties
   floatingElement: HTMLElement | null
-  floatingElementRef: Dispatch<SetStateAction<HTMLElement | null>>
-  forceUpdate: ReturnType<typeof usePopper>['forceUpdate']
-  arrowElementRef: Dispatch<SetStateAction<HTMLElement | null>>
-  styles: { [key: string]: React.CSSProperties }
-  attributes: { [key: string]: { [key: string]: string } | undefined }
+  floatingElementRef: (node: HTMLElement | null) => void
+  floatingPlacement: Placement
+  forceUpdate: () => void
+  styles: React.CSSProperties
+  targetElementRef: (node: Element | null) => void
 } => {
-  const [targetElement, targetElementRef] = useStatefulRef()
-  const [floatingElement, floatingElementRef] = useStatefulRef<HTMLElement>()
   const [arrowElement, arrowElementRef] = useStatefulRef<HTMLElement>()
 
-  const { styles, attributes, forceUpdate } = usePopper(
-    externalTargetElement || targetElement,
-    floatingElement,
-    {
-      modifiers: [
-        {
-          name: 'arrow',
-          options: {
-            element: arrowElement,
-            padding: 20,
-          },
-        },
-      ],
-      placement,
-      strategy,
-    }
-  )
+  const {
+    middlewareData,
+    placement: floatingPlacement,
+    update,
+    refs,
+    styles,
+  } = useFloating({
+    placement,
+    strategy,
+    elements: {
+      reference: externalTargetElement,
+    },
+    middleware: [
+      arrow({
+        element: arrowElement,
+        padding: 20,
+      }),
+    ],
+  })
+
+  const arrowStyles = {
+    left: middlewareData.arrow?.x == null ? '' : `${middlewareData.arrow.x}px`,
+    top: middlewareData.arrow?.y == null ? '' : `${middlewareData.arrow.y}px`,
+  }
 
   return {
-    targetElementRef,
-    floatingElement,
-    floatingElementRef,
-    forceUpdate,
     arrowElementRef,
+    arrowStyles,
+    floatingElement: refs.floating.current,
+    floatingElementRef: refs.floating,
+    floatingPlacement,
+    forceUpdate: update,
     styles,
-    attributes,
+    targetElementRef: refs.reference,
   }
 }

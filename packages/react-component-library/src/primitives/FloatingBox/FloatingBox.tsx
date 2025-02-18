@@ -1,5 +1,5 @@
-import React, { forwardRef, useRef } from 'react'
-import { BasePlacement, Placement, VariationPlacement } from '@popperjs/core'
+import React, { forwardRef, useLayoutEffect, useRef } from 'react'
+import { Placement } from '@floating-ui/react-dom'
 import { Transition } from 'react-transition-group'
 import mergeRefs from 'react-merge-refs'
 
@@ -76,20 +76,14 @@ export const FloatingBox = forwardRef<HTMLDivElement, FloatingBoxProps>(
     const nodeRef = useRef<HTMLDivElement>(null)
     const contentId = useExternalId('floating-box', externalContentId)
     const {
-      targetElementRef,
-      floatingElementRef,
       arrowElementRef,
+      arrowStyles,
+      floatingElementRef,
+      floatingPlacement,
       styles,
-      attributes,
+      targetElementRef,
+      forceUpdate,
     } = useFloatingElement(placement, undefined, targetElement)
-
-    const calculatedPlacement = attributes?.popper?.[
-      'data-popper-placement'
-    ] as BasePlacement | VariationPlacement | undefined
-
-    const basePlacement = calculatedPlacement?.split('-', 1)?.[0] as
-      | BasePlacement
-      | undefined
 
     // Set `floatingBoxRest` to replicate what is happening in React 19 because
     // `ref` is a prop leading to the merged refs being overwritten with
@@ -101,6 +95,10 @@ export const FloatingBox = forwardRef<HTMLDivElement, FloatingBoxProps>(
       ...rest,
       ref,
     }
+
+    useLayoutEffect(() => {
+      forceUpdate()
+    }, [forceUpdate])
 
     return (
       <>
@@ -116,12 +114,11 @@ export const FloatingBox = forwardRef<HTMLDivElement, FloatingBoxProps>(
           {(state) => (
             <StyledFloatingBox
               $transitionStatus={state}
-              style={styles.popper}
+              style={styles}
               onMouseEnter={onMouseEnter}
               onMouseLeave={onMouseLeave}
               role={role}
               data-testid="floating-box"
-              {...attributes.popper}
               {...floatingBoxRest}
               ref={mergeRefs([nodeRef, floatingElementRef, ref])}
             >
@@ -131,10 +128,9 @@ export const FloatingBox = forwardRef<HTMLDivElement, FloatingBoxProps>(
                 data-testid="floating-box-content"
               >
                 <StyledArrow
-                  $placement={basePlacement}
+                  $placement={floatingPlacement}
                   ref={arrowElementRef}
-                  style={styles.arrow}
-                  {...attributes.arrow}
+                  style={arrowStyles}
                 />
                 {children}
               </FloatingBoxContent>

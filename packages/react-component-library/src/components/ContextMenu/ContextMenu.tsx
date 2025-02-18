@@ -36,7 +36,7 @@ export const ContextMenu = ({
   onShow,
   ...rest
 }: ContextMenuProps) => {
-  const { isOpen, floatingElementRef, styles, attributes } = useClickMenu({
+  const { isOpen, floatingElementRef, styles } = useClickMenu({
     attachedToRef,
     clickType,
     initialIsOpen,
@@ -55,8 +55,7 @@ export const ContextMenu = ({
       ref={floatingElementRef}
       $hasIcons={hasIcons}
       $isOpen={isOpen}
-      style={styles.popper}
-      {...attributes.popper}
+      style={styles}
       data-testid="context-menu"
       role="menu"
       {...rest}

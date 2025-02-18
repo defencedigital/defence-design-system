@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components'
-import { BasePlacement } from '@popperjs/core'
+import { Placement } from '@floating-ui/react-dom'
 
 interface StyledArrowProps {
-  $placement?: BasePlacement
+  $placement?: Placement
 }
 
 const placementStyleMap = {
@@ -75,7 +75,10 @@ const placementStyleMap = {
 }
 
 export const StyledArrow = styled.div<StyledArrowProps>`
-  position: relative;
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  background-color: deeppink;
 
   &::before,
   &::after {

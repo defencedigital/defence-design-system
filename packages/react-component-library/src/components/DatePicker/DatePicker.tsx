@@ -1,5 +1,5 @@
 import { DayPickerProps } from 'react-day-picker'
-import { Placement } from '@popperjs/core'
+import { Placement } from '@floating-ui/react-dom'
 import React, { useRef } from 'react'
 
 import { DATE_FORMAT } from '../../constants'

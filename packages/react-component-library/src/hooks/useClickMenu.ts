@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 
-import { VirtualElement } from '@popperjs/core'
+import { VirtualElement } from '@floating-ui/react-dom'
 import { useOpenClose } from './useOpenClose'
 import { useFloatingElement } from './useFloatingElement'
 
@@ -60,7 +60,10 @@ export const useClickMenu = ({
   initialIsOpen,
   onHide,
   onShow,
-}: UseClickMenuParams): Omit<UseClickMenuReturnType, 'forceUpdate'> => {
+}: UseClickMenuParams): Omit<
+  UseClickMenuReturnType,
+  'arrowStyles' | 'floatingPlacement' | 'forceUpdate'
+> => {
   const { open, setOpen } = useOpenClose<boolean>(initialIsOpen)
 
   const {
@@ -74,7 +77,6 @@ export const useClickMenu = ({
     forceUpdate,
     arrowElementRef,
     styles,
-    attributes,
   } = useFloatingElement('auto-end', 'fixed', virtualElement)
 
   const displayMenu = (e: MouseEvent): void => {
@@ -142,6 +144,5 @@ export const useClickMenu = ({
     floatingElementRef,
     arrowElementRef,
     styles,
-    attributes,
   }
 }

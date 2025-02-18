@@ -1,5 +1,5 @@
 import React from 'react'
-import { Placement } from '@popperjs/core'
+import { Placement } from '@floating-ui/react-dom'
 
 import {
   FLOATING_BOX_PLACEMENT,
